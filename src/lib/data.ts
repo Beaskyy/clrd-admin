@@ -17,12 +17,12 @@ export const links = [
     icon: "/images/color-swatch.svg",
     icon2: "/images/swatch.svg",
   },
-  {
-    name: "Roles and Privileges",
-    href: "/roles-and-privileges",
-    icon: "/images/folder-open.svg",
-    icon2: "/images/folder-open2.svg",
-  },
+  // {
+  //   name: "Roles and Privileges",
+  //   href: "/roles-and-privileges",
+  //   icon: "/images/folder-open.svg",
+  //   icon2: "/images/folder-open2.svg",
+  // },
 ];
 export const paymentHistory = [
   {

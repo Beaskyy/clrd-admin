@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { CellAction } from "./cell-action";
 
 export type LicenseColumn = {
   id: number;
@@ -41,7 +40,7 @@ export const columns: ColumnDef<LicenseColumn>[] = [
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1 cursor-pointer"
+        className="flex items-center gap-1 cursor-pointer max-w-12"
       >
         License type
       </div>
@@ -52,7 +51,7 @@ export const columns: ColumnDef<LicenseColumn>[] = [
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        className="flex items-center gap-1 cursor-pointer"
+        className="flex items-center gap-1 cursor-pointer max-w-6"
       >
         License duration
       </div>
@@ -84,9 +83,4 @@ export const columns: ColumnDef<LicenseColumn>[] = [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   accessorKey: "Action",
-  //   cell: ({ row }) => <CellAction data={row.original} />,
-  // },
 ];

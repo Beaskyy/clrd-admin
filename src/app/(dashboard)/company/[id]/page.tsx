@@ -3,13 +3,8 @@
 import { useParams } from "next/navigation";
 import { useCourierDetail } from "@/hooks/use-courier-detail";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Ellipsis } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import Image from "next/image";
+import { ChevronLeft } from "lucide-react";
+
 
 export default function CompanyDetails() {
   const router = useRouter();
@@ -67,7 +62,7 @@ export default function CompanyDetails() {
               </p>
             </div>
 
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger>
                 <Ellipsis className="size-[20px] text-[#344054] cursor-pointer" />
               </PopoverTrigger>
@@ -132,7 +127,7 @@ export default function CompanyDetails() {
                   </div>
                 </div>
               </PopoverContent>
-            </Popover>
+            </Popover> */}
           </div>
           <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
             <div>
@@ -181,7 +176,7 @@ export default function CompanyDetails() {
             </div>
           </div>
         </div>
-        <div className="bg-white rounded-lg p-6">
+        {/* <div className="bg-white rounded-lg p-6">
           <div className="flex justify-between items-center  border-b border-[#F3F4F6] pb-1 mb-4">
             <div className="flex flex-col">
               <p className="text-base text-[#101828] font-semibold tracking-[0.1%]">
@@ -299,7 +294,7 @@ export default function CompanyDetails() {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </main>
   );

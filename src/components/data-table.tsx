@@ -333,69 +333,71 @@ export function DataTable<TData, TValue>({
             </Sheet>
           </div>
         </div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="text-sm text-[#667085] h-11 font-medium leading-5 bg-[#FCFCFD] px-6 py-4 whitespace-nowrap"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {filteredData.length ? (
-              filteredData.map((row: TData, idx: number) => {
-                const tableRow = table.getRowModel().rows[idx];
-                return (
-                  <TableRow
-                    key={(row as any).id || idx}
-                    data-state={tableRow?.getIsSelected() && "selected"}
-                    className={
-                      onRowClick ? "cursor-pointer hover:bg-gray-100" : ""
-                    }
-                    onClick={onRowClick ? () => onRowClick(row) : undefined}
-                  >
-                    {tableRow
-                      ? tableRow.getVisibleCells().map((cell) => (
-                          <TableCell
-                            key={cell.id}
-                            className="px-6 py-4 text-sm first:text-[#101828] text-[#667085] h-[72px] border-y border-[#EAECF0] font-medium leading-[20.3px]"
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
+        <div className="overflow-x-auto">
+          <Table className="min-w-full">
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="text-sm text-[#667085] h-11 font-medium leading-5 bg-[#FCFCFD] px-6 py-4 whitespace-nowrap min-w-0"
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
                             )}
-                          </TableCell>
-                        ))
-                      : null}
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {filteredData.length ? (
+                filteredData.map((row: TData, idx: number) => {
+                  const tableRow = table.getRowModel().rows[idx];
+                  return (
+                    <TableRow
+                      key={(row as any).id || idx}
+                      data-state={tableRow?.getIsSelected() && "selected"}
+                      className={
+                        onRowClick ? "cursor-pointer hover:bg-gray-100" : ""
+                      }
+                      onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    >
+                      {tableRow
+                        ? tableRow.getVisibleCells().map((cell) => (
+                            <TableCell
+                              key={cell.id}
+                              className="px-6 py-4 text-sm first:text-[#101828] text-[#667085] h-[72px] border-y border-[#EAECF0] font-medium leading-[20.3px] max-w-0 truncate"
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))
+                        : null}
+                    </TableRow>
+                  );
+                })
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
         <div className="flex lg:flex-row flex-col justify-between items-end lg:items-center gap-4 px-6 py-4 h-[52px] border-b rounded-b-xl border-[#EAECF0] bg-[#F7F7F8]">
           <div className="text-sm text-[#414141] font-semibold">
             Page {currentPage} of {table.getPageCount()}
