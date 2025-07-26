@@ -3,17 +3,40 @@
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 
-import { licenses } from "@/lib/data";
 import { columns } from "./components/columns";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { EmptyState } from "@/components/empty-state";
 import { LicenseInfo } from "@/components/license-info";
+import { useLicenseApplications } from "@/hooks/use-license-applications";
 
 const License = () => {
   const router = useRouter();
-  const approvalStatus = "approved";
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Fetch license applications
+  const {
+    data: licenseData,
+    isLoading,
+    error,
+  } = useLicenseApplications({
+    // sort: "desc",
+    // date_range: "2025-01-01,2027-01-01",
+    // per_page: 100,
+    // page: currentPage,
+  });
+
+  // Transform license data to match the expected format
+  const licenses =
+    licenseData?.data?.license_applications?.map((license) => ({
+      id: license.id,
+      uuid: license.uuid,
+      company_name: license.owner.name,
+      company_email: license.owner.email,
+      license_type: license.license_category.name,
+      license_duration: "1 year", // Default duration since it's not in the API response
+      status: license.status,
+    })) || [];
 
   return (
     <main>
@@ -32,22 +55,40 @@ const License = () => {
             className="w-fit rounded-full h-10 font-sm font-medium"
             onClick={() => router.push("/license-activation")}
           >
-           Generate report
+            Generate report
           </Button>
         </div>
         <LicenseInfo />
-        {approvalStatus === "approved" ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center p-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Loading license applications...</span>
+          </div>
+        ) : error ? (
+          <div className="p-8 text-center">
+            <p className="text-red-600 mb-4">
+              Error loading license applications
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Retry
+            </button>
+          </div>
+        ) : licenses.length > 0 ? (
           <DataTable
             columns={columns}
             data={licenses}
-            searchKey="name"
+            searchKey="company_name"
             tableName={`History`}
             tableDescription="View recent license purchased and renewal"
             onPageChange={(page: number) => setCurrentPage(page)}
             currentPage={currentPage}
+            onRowClick={(row) => router.push(`/license/${row.uuid}`)}
           />
         ) : (
-          <EmptyState title="No request made yet" />
+          <EmptyState title="No license applications found" />
         )}
       </div>
     </main>

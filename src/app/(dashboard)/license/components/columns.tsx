@@ -5,6 +5,7 @@ import { CellAction } from "./cell-action";
 
 export type LicenseColumn = {
   id: number;
+  uuid: string;
   company_name: string;
   company_email: string;
   license_type: string;
@@ -83,9 +84,9 @@ export const columns: ColumnDef<LicenseColumn>[] = [
       );
     },
   },
-  {
-    id: "actions",
-    accessorKey: "Action",
-    cell: ({ row }) => <CellAction data={row.original} />,
-  },
+  // {
+  //   id: "actions",
+  //   accessorKey: "Action",
+  //   cell: ({ row }) => <CellAction data={row.original} />,
+  // },
 ];

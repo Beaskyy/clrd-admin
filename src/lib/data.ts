@@ -12,7 +12,7 @@ export const links = [
   //   icon2: "/card2.svg",
   // },
   {
-    name: "License approval",
+    name: "License Requests",
     href: "/license",
     icon: "/images/color-swatch.svg",
     icon2: "/images/swatch.svg",
