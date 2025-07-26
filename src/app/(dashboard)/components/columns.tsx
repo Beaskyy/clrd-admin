@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { CellAction } from "./cell-action";
 
 export type CompanyColumn = {
   id: number;
@@ -82,10 +81,5 @@ export const columns: ColumnDef<CompanyColumn>[] = [
         Date requested
       </div>
     ),
-  },
-  {
-    id: "actions",
-    accessorKey: "Action",
-    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];

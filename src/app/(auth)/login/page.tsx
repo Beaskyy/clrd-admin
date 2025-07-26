@@ -19,9 +19,21 @@ import { z } from "zod";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 
 const Login = () => {
   const [disabled, setDisabled] = useState(false);
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  useEffect(() => {
+    // Redirect to dashboard if user is already authenticated
+    if (status === "authenticated" && session) {
+      router.replace("/");
+    }
+  }, [session, status, router]);
 
   const formSchema = z.object({
     email: z.email({ message: "Please enter a valid email address." }),
@@ -41,38 +53,24 @@ const Login = () => {
   const onSubmit = async (values: FormValues) => {
     setDisabled(true);
     try {
-      const options = {
-        method: "POST",
-        headers: new Headers({
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        }),
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      };
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        options
-      );
-      const data = await response.json();
-      if (!response.ok) {
-        toast.error(data.message);
-        if (response.status === 403) {
-          sessionStorage.setItem("courier", JSON.stringify(data.data.courier));
-          window.location.href = "/payments";
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        if (result.error === "UNAUTHORIZED") {
+          // Handle unathorized required case
+          toast.error("You are not authorized to view this page.");
+       
+        } else {
+          toast.error(result.error);
         }
         setDisabled(false);
       } else {
-        // Cookies.set("token", data.data.token.access_token, {
-        //   expires: 1 / 24,
-        //   secure: true,
-        //   sameSite: "Strict",
-        // });
-        localStorage.setItem("user", JSON.stringify(data.data.user));
-        toast.success(data.message);
-        window.location.href = "/";
+        toast.success("Login successful!");
+        router.push("/");
       }
     } catch (error: unknown) {
       const message =

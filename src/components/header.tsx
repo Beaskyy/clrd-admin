@@ -13,35 +13,33 @@ import {
 import { Navigation } from "./navigation";
 import Link from "next/link";
 import { toast } from "sonner";
+import { signOut, useSession } from "next-auth/react";
 
 export const Header = () => {
-  const logout = async () => {
-    const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`;
+  const { data: session } = useSession();
 
+  const logout = async () => {
     try {
+      // Call the logout API if needed
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          // Authorization: `Bearer ${token}`,
         },
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        toast.error(data.message);
-        return;
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(data.message || "Logged out successfully");
       }
-      toast.success(data.message);
-      document.cookie = "token=; Max-Age=0; Path=/;";
-      window.location.href = "/login";
-    } catch (error: unknown) {
-      const message =
-        typeof error === "object" && error !== null && "message" in error
-          ? (error as { message: string }).message
-          : "An unexpected error occurred";
-      toast.error(message);
+    } catch (error) {
+      // Even if API call fails, we still want to logout locally
+      console.error("Logout API error:", error);
+    } finally {
+      // Always logout locally using NextAuth
+      signOut({ callbackUrl: "/login" });
     }
   };
   return (
@@ -71,7 +69,9 @@ export const Header = () => {
               <DropdownMenuTrigger>
                 <div className="flex justify-center items-center rounded-[25px] w-fit h-[36px] bg-[#F0F2F5] py-2 px-3">
                   <h6 className="text-sm text-[#344054] font-medium whitespace-nowrap">
-                    Administrator
+                    {session?.user?.name ||
+                      session?.user?.email ||
+                      "Administrator"}
                   </h6>
                 </div>
               </DropdownMenuTrigger>

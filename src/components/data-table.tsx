@@ -49,6 +49,7 @@ interface DataTableProps<TData, TValue> {
   currentPage: number;
   totalPages?: number;
   onPageChange?: (page: number) => void;
+  onRowClick?: (row: TData) => void;
 }
 
 export function DataTable<TData, TValue>({
@@ -60,6 +61,7 @@ export function DataTable<TData, TValue>({
   currentPage,
   totalPages,
   onPageChange,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -359,9 +361,12 @@ export function DataTable<TData, TValue>({
                 const tableRow = table.getRowModel().rows[idx];
                 return (
                   <TableRow
-                  
                     key={(row as any).id || idx}
                     data-state={tableRow?.getIsSelected() && "selected"}
+                    className={
+                      onRowClick ? "cursor-pointer hover:bg-gray-100" : ""
+                    }
+                    onClick={onRowClick ? () => onRowClick(row) : undefined}
                   >
                     {tableRow
                       ? tableRow.getVisibleCells().map((cell) => (

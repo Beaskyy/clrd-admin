@@ -2,20 +2,12 @@
 
 import { Header } from "@/components/header";
 import { Sidebar } from "@/components/sidebar";
-// import token from "@/lib/access-token";
-// import { useRouter } from "next/navigation";
+import { AuthGuard } from "@/components/auth-guard";
 import { useEffect, useState } from "react";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  // const router = useRouter();
   const [activeMenu, setActiveMenu] = useState(true);
-  const [screenSize, setScreenSize] = useState(window.innerWidth);
-
-  // useEffect(() => {
-  //   if (!token) {
-  //     router.replace("/login");
-  //   }
-  // });
+  const [screenSize, setScreenSize] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,40 +38,42 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     }
   };
   return (
-    <main>
-      <div
-        className="flex relative"
-        onClick={() => {
-          if (activeMenu) {
-            handleCloseSidebar();
-          }
-        }}
-      >
-        {activeMenu && (
-          <div className="w-[272px] fixed z-50 left-0">
-            <Sidebar />
-          </div>
-        )}
+    <AuthGuard>
+      <main>
         <div
-          className={`min-h-screen w-full ${
-            activeMenu ? "md:ml-64" : "flex-2"
-          }`}
+          className="flex relative"
+          onClick={() => {
+            if (activeMenu) {
+              handleCloseSidebar();
+            }
+          }}
         >
-          <div className="fixed md:static w-full z-20">
-            <Header />
+          {activeMenu && (
+            <div className="w-[272px] fixed z-50 left-0">
+              <Sidebar />
+            </div>
+          )}
+          <div
+            className={`min-h-screen w-full ${
+              activeMenu ? "md:ml-64" : "flex-2"
+            }`}
+          >
+            <div className="fixed md:static w-full z-20">
+              <Header />
+            </div>
+          </div>
+          <div
+            className={`absolute top-16 transition-all duration-300 ${
+              activeMenu
+                ? "md:w-[calc(100%-272px)] w-full overflow-hidden md:left-[272px]"
+                : "w-full md:left-0"
+            }`}
+          >
+            {children}
           </div>
         </div>
-        <div
-          className={`absolute top-20 transition-all duration-300 ${
-            activeMenu
-              ? "md:w-[calc(100%-272px)] w-full overflow-hidden md:left-[272px]"
-              : "w-full md:left-0"
-          }`}
-        >
-          {children}
-        </div>
-      </div>
-    </main>
+      </main>
+    </AuthGuard>
   );
 };
 

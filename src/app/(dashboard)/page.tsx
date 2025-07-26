@@ -5,8 +5,10 @@ import { DataTable } from "@/components/data-table";
 import { companies } from "@/lib/data";
 import { useState } from "react";
 import { columns } from "./components/columns";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const user = JSON?.parse(localStorage.getItem("user") || "{}");
   const [currentPage, setCurrentPage] = useState(1);
   return (
@@ -29,6 +31,7 @@ export default function Home() {
           tableDescription="View recent payments made and their status"
           onPageChange={(page: number) => setCurrentPage(page)}
           currentPage={currentPage}
+          onRowClick={(row) => router.push(`/company/${row.id}`)}
         />
       </div>
     </main>
