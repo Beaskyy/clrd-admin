@@ -1,0 +1,97 @@
+import { Transaction, TransactionResponse } from "@/types/transaction";
+
+export const mockTransactions: Transaction[] = [
+  {
+    id: 1,
+    payment_name: "License activation",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "success",
+    date_added: "2021-09-04T00:14:00Z",
+    created_at: "2021-09-04T00:14:00Z",
+    updated_at: "2021-09-04T00:14:00Z",
+  },
+  {
+    id: 2,
+    payment_name: "License renewal",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "pending",
+    date_added: "2023-10-13T08:05:00Z",
+    created_at: "2023-10-13T08:05:00Z",
+    updated_at: "2023-10-13T08:05:00Z",
+  },
+  {
+    id: 3,
+    payment_name: "Payment for Penalties",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "pending",
+    date_added: "2023-03-13T08:05:00Z",
+    created_at: "2023-03-13T08:05:00Z",
+    updated_at: "2023-03-13T08:05:00Z",
+  },
+  {
+    id: 4,
+    payment_name: "License renewal",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "success",
+    date_added: "2023-01-01T13:49:00Z",
+    created_at: "2023-01-01T13:49:00Z",
+    updated_at: "2023-01-01T13:49:00Z",
+  },
+  {
+    id: 5,
+    payment_name: "License renewal",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "success",
+    date_added: "2023-02-21T15:05:00Z",
+    created_at: "2023-02-21T15:05:00Z",
+    updated_at: "2023-02-21T15:05:00Z",
+  },
+  {
+    id: 6,
+    payment_name: "License renewal",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "success",
+    date_added: "2023-08-03T00:10:00Z",
+    created_at: "2023-08-03T00:10:00Z",
+    updated_at: "2023-08-03T00:10:00Z",
+  },
+  {
+    id: 7,
+    payment_name: "License renewal",
+    transaction_id: "REF6478394HG",
+    amount_paid: "N120,000",
+    status: "success",
+    date_added: "2023-02-21T15:05:00Z",
+    created_at: "2023-02-21T15:05:00Z",
+    updated_at: "2023-02-21T15:05:00Z",
+  },
+];
+
+export const mockTransactionResponse: TransactionResponse = {
+  status: "success",
+  message: "Transactions retrieved successfully.",
+  data: {
+    meta: {
+      total: 7,
+      per_page: 10,
+      current_page: 1,
+      last_page: 1,
+      first_page_url:
+        "http://clrd_accounts.test/api/v1/admin/transactions?page=1",
+      last_page_url:
+        "http://clrd_accounts.test/api/v1/admin/transactions?page=1",
+      next_page_url: null,
+      prev_page_url: null,
+      path: "http://clrd_accounts.test/api/v1/admin/transactions",
+      from: 1,
+      to: 7,
+    },
+    transactions: mockTransactions,
+  },
+};

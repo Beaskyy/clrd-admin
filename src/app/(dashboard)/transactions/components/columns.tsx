@@ -2,47 +2,46 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-export type CompanyColumn = {
+export type TransactionColumn = {
   id: number;
-  uuid: string;
-  company_name: string;
-  company_email: string;
-  contact_phone: string;
-  status: string;
-  date_requested: string;
+  payment_name: string;
+  transaction_id: string;
+  amount_paid: string;
+  status: "success" | "pending" | "failed";
+  date_added: string;
 };
 
-export const columns: ColumnDef<CompanyColumn>[] = [
+export const columns: ColumnDef<TransactionColumn>[] = [
   {
-    accessorKey: "company_name",
+    accessorKey: "payment_name",
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 cursor-pointer"
       >
-        Company name
+        Payment Name
       </div>
     ),
   },
   {
-    accessorKey: "company_email",
+    accessorKey: "transaction_id",
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 cursor-pointer"
       >
-        Company email
+        Transaction ID
       </div>
     ),
   },
   {
-    accessorKey: "contact_phone",
+    accessorKey: "amount_paid",
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 cursor-pointer"
       >
-        Contact phone
+        Amount Paid
       </div>
     ),
   },
@@ -58,10 +57,21 @@ export const columns: ColumnDef<CompanyColumn>[] = [
     ),
     cell: (info) => {
       const status = info.getValue() as string;
-      const isApproved = status.toLowerCase() === "activated ";
-      const statusStyle = isApproved
-        ? { color: "#027A48", backgroundColor: "#ECFDF3" }
-        : { color: "#E7B114", backgroundColor: "#FFF8EF" };
+      const getStatusStyle = (status: string) => {
+        switch (status.toLowerCase()) {
+          case "success":
+            return { color: "#027A48", backgroundColor: "#ECFDF3" };
+          case "pending":
+            return { color: "#E7B114", backgroundColor: "#FFF8EF" };
+          case "failed":
+            return { color: "#D92D20", backgroundColor: "#FEF3F2" };
+          default:
+            return { color: "#667085", backgroundColor: "#F9FAFB" };
+        }
+      };
+
+      const statusStyle = getStatusStyle(status);
+
       return (
         <div
           style={statusStyle}
@@ -73,14 +83,25 @@ export const columns: ColumnDef<CompanyColumn>[] = [
     },
   },
   {
-    accessorKey: "date_requested",
+    accessorKey: "date_added",
     header: ({ column }) => (
       <div
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         className="flex items-center gap-1 cursor-pointer"
       >
-        Date requested
+        Date Added
       </div>
     ),
+    cell: (info) => {
+      const date = info.getValue() as string;
+      return new Date(date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    },
   },
 ];

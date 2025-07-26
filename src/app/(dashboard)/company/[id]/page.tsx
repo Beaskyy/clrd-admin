@@ -1,8 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { companies } from "@/lib/data";
-import { CompanyColumn } from "../../components/columns";
+import { useCourierDetail } from "@/hooks/use-courier-detail";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Ellipsis } from "lucide-react";
 import {
@@ -15,22 +14,35 @@ import Image from "next/image";
 export default function CompanyDetails() {
   const router = useRouter();
   const params = useParams();
-  const companyId = Number(params.id);
+  const courierUuid = params.id as string;
 
-  // Find the company data based on the ID
-  const company = companies.find(
-    (comp: CompanyColumn) => comp.id === companyId
-  );
+  // Fetch courier details using the hook
+  const { data, isLoading, error } = useCourierDetail(courierUuid);
+  const courier = data?.data;
 
-  if (!company) {
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-[22px] md:p-9 p-5 bg-[#F5F5F5]">
+        <div className="bg-white rounded-lg p-6">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <span className="ml-2">Loading courier details...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !courier) {
     return (
       <div className="flex flex-col gap-[22px] md:p-9 p-5 bg-[#F5F5F5]">
         <div className="bg-white rounded-lg p-6">
           <h2 className="text-xl font-semibold text-[#101828] mb-4">
-            Company Not Found
+            Courier Not Found
           </h2>
           <p className="text-[#667085]">
-            The company you&apos;re looking for doesn&apos;t exist.
+            The courier you&apos;re looking for doesn&apos;t exist or there was
+            an error loading the data.
           </p>
         </div>
       </div>
@@ -128,19 +140,19 @@ export default function CompanyDetails() {
                 Company Name
               </label>
               <p className="lg:text-base text-sm font-medium text-[#101828]">
-                {company.company_name}
+                {courier.name}
               </p>
             </div>
             <div>
               <label className="lg:text-sm text-xs text-[#667085]">Email</label>
               <p className="lg:text-base text-sm text-[#101828]">
-                {company.company_email}
+                {courier.email}
               </p>
             </div>
             <div>
               <label className="lg:text-sm text-xs text-[#667085]">Phone</label>
               <p className="lg:text-base text-sm text-[#101828]">
-                {company.contact_phone}
+                {courier.phone}
               </p>
             </div>
             <div>
@@ -150,21 +162,21 @@ export default function CompanyDetails() {
               <div className="flex items-center gap-2">
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${
-                    company.status.toLowerCase() === "approved"
+                    courier.activated
                       ? "bg-[#ECFDF3] text-[#027A48]"
                       : "bg-[#FFF8EF] text-[#E7B114]"
                   }`}
                 >
-                  {company.status}
+                  {courier.activated ? "Activated" : "Pending"}
                 </span>
               </div>
             </div>
             <div>
               <label className="lg:text-sm text-xs text-[#667085]">
-                Date Requested
+                Date Created
               </label>
               <p className="lg:text-base text-sm text-[#101828]">
-                {company.date_requested}
+                {courier.created_at}
               </p>
             </div>
           </div>

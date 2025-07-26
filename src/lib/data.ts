@@ -5,12 +5,23 @@ export const links = [
     icon: "/images/dashboard.svg",
     icon2: "/images/home.svg",
   },
-
+  // {
+  //   name: "Transactions",
+  //   href: "/transactions",
+  //   icon: "/card.svg",
+  //   icon2: "/card2.svg",
+  // },
   {
     name: "License approval",
     href: "/license",
     icon: "/images/color-swatch.svg",
     icon2: "/images/swatch.svg",
+  },
+  {
+    name: "Roles and Privileges",
+    href: "/roles-and-privileges",
+    icon: "/images/folder-open.svg",
+    icon2: "/images/folder-open2.svg",
   },
 ];
 export const paymentHistory = [
