@@ -4,28 +4,49 @@ import { useParams } from "next/navigation";
 import { useCourierDetail } from "@/hooks/use-courier-detail";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
-
+import { DetailPageSkeleton } from "@/components/detail-page-skeleton";
+import { columns } from "../../transactions/components/columns";
+import { DataTable } from "@/components/data-table";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
+import { useState } from "react";
+import { useTransactions } from "@/hooks/use-transactions";
 
 export default function CompanyDetails() {
   const router = useRouter();
   const params = useParams();
   const courierUuid = params.id as string;
-
+  const [currentPage, setCurrentPage] = useState(1);
   // Fetch courier details using the hook
   const { data, isLoading, error } = useCourierDetail(courierUuid);
   const courier = data?.data;
 
+  // Fetch transactions for the specific courier
+  const {
+    data: transactionsData,
+    isLoading: transactionsLoading,
+    error: transactionsError,
+  } = useTransactions(courier?.id || 0, {
+    per_page: 100,
+    page: currentPage,
+    sort: "desc",
+    status: "success,pending,failed",
+  });
+
+  // Transform transaction data to match the expected format
+  const transactions =
+    transactionsData?.data?.transactions?.map((transaction) => ({
+      id: transaction.id,
+      uuid: transaction.uuid,
+      reference: transaction.reference,
+      category: transaction.category,
+      type: transaction.type,
+      amount: transaction.amount,
+      status: transaction.status,
+      created_at: transaction.created_at,
+    })) || [];
+
   if (isLoading) {
-    return (
-      <div className="flex flex-col gap-[22px] md:p-9 p-5 bg-[#F5F5F5]">
-        <div className="bg-white rounded-lg p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading courier details...</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <DetailPageSkeleton sections={5} cardsPerSection={3} />;
   }
 
   if (error || !courier) {
@@ -176,126 +197,125 @@ export default function CompanyDetails() {
             </div>
           </div>
         </div>
-        {/* <div className="bg-white rounded-lg p-6">
-          <div className="flex justify-between items-center  border-b border-[#F3F4F6] pb-1 mb-4">
+
+        {/* Profile Details Section */}
+        <div className="bg-white rounded-lg p-6">
+          <div className="flex justify-between items-center border-b border-[#F3F4F6] pb-1 mb-4">
             <div className="flex flex-col">
               <p className="text-base text-[#101828] font-semibold tracking-[0.1%]">
-                Company Documents
+                Profile Details
               </p>
             </div>
           </div>
           <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                Applicant Name
+              </label>
+              <p className="lg:text-base text-sm font-medium text-[#101828]">
+                {courier.profile.applicant_name}
+              </p>
             </div>
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                Applicant Position
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.applicant_position}
+              </p>
             </div>
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                Business Name
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.business_name}
+              </p>
             </div>
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                CAC Number
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.cac_number}
+              </p>
             </div>
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                Address
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.address}
+              </p>
             </div>
-            <div className="flex items-center border border-[#EBEBEB] p-4 pl-3.5 rounded-xl">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1">
-                  <Image
-                    src="/images/file-icon.svg"
-                    alt="file-icon"
-                    width={32}
-                    height={32}
-                  />
-                  <p className="text-sm font-medium text-[#171717]">
-                    Tenancy Document
-                  </p>
-                </div>
-                <div className="flex justify-center items-center border border-[#F3F4F6] shadow-sm  py-1 px-3.5 rounded-lg text-sm text-[#344054] font-medium cursor-pointer hover:bg-[#F9FAFB]">
-                  View
-                </div>
-              </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                License Category
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.license_category.name}
+              </p>
+            </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">State</label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                {courier.profile.state.name}
+              </p>
+            </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                License Price
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                ₦{courier.profile.license_category.price}
+              </p>
+            </div>
+            <div>
+              <label className="lg:text-sm text-xs text-[#667085]">
+                Renewal Price
+              </label>
+              <p className="lg:text-base text-sm text-[#101828]">
+                ₦{courier.profile.license_category.renewal_price}
+              </p>
             </div>
           </div>
-        </div> */}
-      </div>
+        </div>
+
+          {transactionsLoading ? (
+            <DataTableSkeleton
+              rows={10}
+              columns={6}
+              tableName="Transaction history"
+              tableDescription="View recent payments made and their status"
+            />
+          ) : transactionsError ? (
+            <div className="p-8 text-center">
+              <p className="text-red-600 mb-4">Error loading transactions</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Retry
+              </button>
+            </div>
+          ) : (
+            <DataTable
+              columns={columns}
+              data={transactions}
+              searchKey="reference"
+              tableName="Transaction history"
+              tableDescription="View recent payments made and their status"
+              onPageChange={(page: number) => setCurrentPage(page)}
+              currentPage={currentPage}
+              showFilter={false}
+              onRowClick={(row) =>
+                router.push(
+                  `/company/${courier.id}/transactions/${row.uuid}`
+                )
+              }
+            />
+          )}
+        </div>
     </main>
   );
 }

@@ -7,6 +7,8 @@ import { useApprovalTrails } from "@/hooks/use-approval-trails";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Ellipsis } from "lucide-react";
 import { toast } from "sonner";
+import { DetailPageSkeleton } from "@/components/detail-page-skeleton";
+import { ApprovalTrailsSkeleton } from "@/components/approval-trails-skeleton";
 import {
   Popover,
   PopoverContent,
@@ -100,16 +102,7 @@ export default function LicenseDetails() {
   const approvalTrails = approvalTrailsData?.data || [];
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col gap-[22px] md:p-9 p-5 bg-[#F5F5F5]">
-        <div className="bg-white rounded-lg p-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading license application details...</span>
-          </div>
-        </div>
-      </div>
-    );
+    return <DetailPageSkeleton sections={5} cardsPerSection={3} />;
   }
 
   if (error || !license) {
@@ -615,10 +608,7 @@ export default function LicenseDetails() {
           </div>
 
           {approvalTrailsLoading ? (
-            <div className="flex items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-              <span className="ml-2">Loading approval history...</span>
-            </div>
+            <ApprovalTrailsSkeleton trails={3} />
           ) : approvalTrails.length === 0 ? (
             <div className="p-8 text-center">
               <p className="text-gray-600">No approval history found</p>

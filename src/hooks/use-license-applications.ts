@@ -4,6 +4,7 @@ import {
   LicenseApplicationsParams,
 } from "@/types/license-application";
 import { useSession } from "next-auth/react";
+import { createApiRequest } from "@/lib/api-utils";
 
 const fetchLicenseApplications = async (
   params: LicenseApplicationsParams,
@@ -22,19 +23,14 @@ const fetchLicenseApplications = async (
     process.env.NEXT_PUBLIC_API_URL
   }/admin/license-applications?${searchParams.toString()}`;
 
-  const response = await fetch(url, {
+  const response = await createApiRequest(url, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-    },
+    accessToken,
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch license applications: ${response.statusText}`
-    );
+  if (!response) {
+    // Response is null when 401 redirect happens
+    throw new Error("Unauthorized");
   }
 
   return response.json();
@@ -47,8 +43,11 @@ export const useLicenseApplications = (
 
   return useQuery({
     queryKey: ["license-applications", params],
-    queryFn: () => fetchLicenseApplications(params, session?.accessToken),
-    enabled: !!session?.accessToken, // Only fetch when user is authenticated
+    queryFn: () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fetchLicenseApplications(params, (session as any)?.accessToken),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    enabled: !!(session as any)?.accessToken, // Only fetch when user is authenticated
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep data in cache for 10 minutes
     retry: (failureCount, error) => {

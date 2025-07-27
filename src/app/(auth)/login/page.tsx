@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-// import Cookies from "js-cookie";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -147,7 +146,7 @@ const Login = () => {
                 >
                   Login
                 </Button>
-                <div className="flex justify-center items-center border border-[#F5F5F5] h-11 rounded-full mt-4 shadow-sm text-[#344054] font-medium text-base gap-3 cursor-pointer hover:opacity-80">
+                {/* <div className="flex justify-center items-center border border-[#F5F5F5] h-11 rounded-full mt-4 shadow-sm text-[#344054] font-medium text-base gap-3 cursor-pointer hover:opacity-80">
                   <Image
                     src="/images/google.svg"
                     alt="google"
@@ -155,7 +154,7 @@ const Login = () => {
                     height={24}
                   />
                   Sign in with Google
-                </div>
+                </div> */}
               </form>
             </Form>
           </div>

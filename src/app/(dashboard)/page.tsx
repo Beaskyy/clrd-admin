@@ -2,6 +2,7 @@
 
 import { DashboardInfo } from "@/components/dashboard-info";
 import { DataTable } from "@/components/data-table";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
 import { useState } from "react";
 import { columns } from "./components/columns";
 import { useRouter } from "next/navigation";
@@ -50,10 +51,12 @@ export default function Home() {
         </div>
         <DashboardInfo />
         {isLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading courier companies...</span>
-          </div>
+          <DataTableSkeleton
+            rows={10}
+            columns={6}
+            tableName="Recent applications"
+            tableDescription="View recent courier companies and their status"
+          />
         ) : error ? (
           <div className="p-8 text-center">
             <p className="text-red-600 mb-4">Error loading courier companies</p>

@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
+import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-const handler = NextAuth({
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -54,14 +54,16 @@ const handler = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async jwt({ token, user }: any) {
       if (user) {
         token.accessToken = user.accessToken;
         token.user = user.user;
       }
       return token;
     },
-    async session({ session, token }) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async session({ session, token }: any) {
       if (token && token.user) {
         session.user = token.user;
         session.accessToken = token.accessToken;
@@ -74,9 +76,11 @@ const handler = NextAuth({
     error: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

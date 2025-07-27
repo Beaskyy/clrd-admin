@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { LicenseApplicationDetailResponse } from "@/types/license-application-detail";
 import { useSession } from "next-auth/react";
+import { createApiRequest } from "@/lib/api-utils";
 
 const fetchLicenseApplicationDetail = async (
   licenseUuid: string,
@@ -8,19 +9,14 @@ const fetchLicenseApplicationDetail = async (
 ): Promise<LicenseApplicationDetailResponse> => {
   const url = `${process.env.NEXT_PUBLIC_API_URL}/admin/license-applications/${licenseUuid}`;
 
-  const response = await fetch(url, {
+  const response = await createApiRequest(url, {
     method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-    },
+    accessToken,
   });
 
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch license application details: ${response.statusText}`
-    );
+  if (!response) {
+    // Response is null when 401 redirect happens
+    throw new Error("Unauthorized");
   }
 
   return response.json();
@@ -32,8 +28,10 @@ export const useLicenseApplicationDetail = (licenseUuid: string) => {
   return useQuery({
     queryKey: ["license-application-detail", licenseUuid],
     queryFn: () =>
-      fetchLicenseApplicationDetail(licenseUuid, session?.accessToken),
-    enabled: !!session?.accessToken && !!licenseUuid, // Only fetch when user is authenticated and UUID is provided
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fetchLicenseApplicationDetail(licenseUuid, (session as any)?.accessToken),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    enabled: !!(session as any)?.accessToken && !!licenseUuid, // Only fetch when user is authenticated and UUID is provided
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 10 * 60 * 1000, // Keep data in cache for 10 minutes
     retry: (failureCount, error) => {

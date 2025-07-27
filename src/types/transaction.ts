@@ -1,10 +1,21 @@
+export interface PaymentLog {
+  provider: string;
+  reference: string;
+  card: string[];
+}
+
 export interface Transaction {
   id: number;
-  payment_name: string;
-  transaction_id: string;
-  amount_paid: string;
+  uuid: string;
+  reference: string;
+  category: string;
+  type: "debit" | "credit";
+  amount: string;
+  cleared_amount: string;
+  narration: string;
+  paymentLog: PaymentLog;
+  creator: string[];
   status: "success" | "pending" | "failed";
-  date_added: string;
   created_at: string;
   updated_at: string;
 }
@@ -33,8 +44,10 @@ export interface TransactionResponse {
 export interface TransactionParams {
   sort?: "asc" | "desc";
   date_range?: string;
-  status?: "success" | "pending" | "failed";
-  payment_name?: string;
+  status?: string; // Can be comma-separated: "success,pending,failed"
+  category?: string;
+  search?: string;
+  type?: "debit" | "credit";
   page?: number;
   per_page?: number;
 }

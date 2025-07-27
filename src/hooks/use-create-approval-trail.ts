@@ -4,6 +4,7 @@ import {
   LicenseApprovalTrailResponse,
 } from "@/types/license-approval-trail";
 import { useSession } from "next-auth/react";
+import { createApiRequest } from "@/lib/api-utils";
 
 const createApprovalTrail = async (
   licenseUuid: string,
@@ -12,22 +13,15 @@ const createApprovalTrail = async (
 ): Promise<LicenseApprovalTrailResponse> => {
   const url = `${process.env.NEXT_PUBLIC_API_URL}/admin/license-applications/${licenseUuid}/approval-trails`;
 
-  const response = await fetch(url, {
+  const response = await createApiRequest(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-    },
+    accessToken,
     body: JSON.stringify(payload),
   });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.message ||
-        `Failed to create approval trail: ${response.statusText}`
-    );
+  if (!response) {
+    // Response is null when 401 redirect happens
+    throw new Error("Unauthorized");
   }
 
   return response.json();
@@ -39,7 +33,8 @@ export const useCreateApprovalTrail = (licenseUuid: string) => {
 
   return useMutation({
     mutationFn: (payload: LicenseApprovalTrailRequest) =>
-      createApprovalTrail(licenseUuid, payload, session?.accessToken),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createApprovalTrail(licenseUuid, payload, (session as any)?.accessToken),
 
     onSuccess: (data) => {
       // Invalidate and refetch license application detail

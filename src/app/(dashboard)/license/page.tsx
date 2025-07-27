@@ -1,6 +1,7 @@
 "use client";
 
 import { DataTable } from "@/components/data-table";
+import { DataTableSkeleton } from "@/components/data-table-skeleton";
 import { Button } from "@/components/ui/button";
 
 import { columns } from "./components/columns";
@@ -44,7 +45,7 @@ const License = () => {
         <div className="flex md:flex-row flex-col justify-between md:items-center gap-[14px]">
           <div className="flex flex-col gap-1 leading-[18px]">
             <h3 className="text-[22px] text-[#00081E] font-semibold leading-[26.4px]">
-              License approval
+              License Requests
             </h3>
             <h6 className="text-base text-[#475367] leading-[23.2px]">
               What are you getting done today
@@ -60,10 +61,12 @@ const License = () => {
         </div>
         <LicenseInfo />
         {isLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-            <span className="ml-2">Loading license applications...</span>
-          </div>
+          <DataTableSkeleton
+            rows={10}
+            columns={5}
+            tableName="History"
+            tableDescription="View recent license purchased and renewal"
+          />
         ) : error ? (
           <div className="p-8 text-center">
             <p className="text-red-600 mb-4">

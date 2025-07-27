@@ -50,6 +50,7 @@ interface DataTableProps<TData, TValue> {
   totalPages?: number;
   onPageChange?: (page: number) => void;
   onRowClick?: (row: TData) => void;
+  showFilter?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -62,6 +63,7 @@ export function DataTable<TData, TValue>({
   totalPages,
   onPageChange,
   onRowClick,
+  showFilter = true,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -102,6 +104,7 @@ export function DataTable<TData, TValue>({
     if (selectedStatuses.length > 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filtered = filtered.filter((row: TData) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         selectedStatuses.includes((row as any).status?.toString().trim() || "")
       );
     }
@@ -109,6 +112,7 @@ export function DataTable<TData, TValue>({
     if (fromDate || toDate) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       filtered = filtered.filter((row: TData) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const dateRequested = (row as any).date_requested;
         if (!dateRequested) return true;
         const rowDate = parseDate(dateRequested);
@@ -172,7 +176,7 @@ export function DataTable<TData, TValue>({
               {tableDescription}
             </h3>
           </div>
-          <div>
+          {showFilter && (
             <Sheet>
               <SheetTrigger asChild>
                 <Button
@@ -331,7 +335,7 @@ export function DataTable<TData, TValue>({
                 </div>
               </SheetContent>
             </Sheet>
-          </div>
+          )}
         </div>
         <div className="overflow-x-auto">
           <Table className="min-w-full">
@@ -362,6 +366,7 @@ export function DataTable<TData, TValue>({
                   const tableRow = table.getRowModel().rows[idx];
                   return (
                     <TableRow
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       key={(row as any).id || idx}
                       data-state={tableRow?.getIsSelected() && "selected"}
                       className={

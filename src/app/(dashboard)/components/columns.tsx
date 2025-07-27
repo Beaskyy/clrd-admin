@@ -58,8 +58,8 @@ export const columns: ColumnDef<CompanyColumn>[] = [
     ),
     cell: (info) => {
       const status = info.getValue() as string;
-      const isApproved = status.toLowerCase() === "activated ";
-      const statusStyle = isApproved
+      const isActivated = status.toLowerCase() === "activated";
+      const statusStyle = isActivated
         ? { color: "#027A48", backgroundColor: "#ECFDF3" }
         : { color: "#E7B114", backgroundColor: "#FFF8EF" };
       return (
