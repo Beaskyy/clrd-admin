@@ -5,10 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export const Sidebar = () => {
   const pathname = usePathname();
   const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+  const { data: session } = useSession();
 
   return (
     <div className="w-[272px] bg-[#001B0D] h-screen fixed flex flex-col py-6 px-4">
@@ -16,7 +18,7 @@ export const Sidebar = () => {
         <div>
           <div className="py-2">
             <div className="flex justify-between items-center py-2 px-2 rounded">
-              <Link href="/profile" className="flex gap-3 items-center">
+              <div className="flex gap-3 items-center">
                 <div className="relative w-10 h-10 rounded-full">
                   <Image
                     src="/images/avatar.svg"
@@ -26,10 +28,12 @@ export const Sidebar = () => {
                   />
                 </div>
                 <div className="flex flex-col text-white text-sm leading-[18.9px]">
-                  <h6 className="font-semibold">David Olufunmi</h6>
+                  <h6 className="font-semibold">
+                    {session?.user?.name || session?.user?.email || "User"}
+                  </h6>
                   <h6 className="font-normal">Profile</h6>
                 </div>
-              </Link>
+              </div>
               <ChevronsUpDown className="size-5 text-white" />
             </div>
           </div>
